@@ -1,3 +1,5 @@
+// Legacy Vite page kept for reference only.
+// The active homepage now lives in app/page.tsx and components/home/*.
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import PricingSnapshotTable from "../components/PricingSnapshotTable.jsx";

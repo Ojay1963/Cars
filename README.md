@@ -67,4 +67,5 @@ Open `http://localhost:3000`.
 
 - If `DATABASE_URL` is not configured, the homepage and inventory use typed seeded fallback content so the app still builds and previews cleanly.
 - The old Vite implementation still exists in `src/` for reference, but the active platform now runs from `app/`.
+- If you are editing the homepage, use `app/page.tsx` and `components/home/*`. Changes in `src/pages/Home.jsx` will not affect the live Next.js app.
 - Next phases should expand listing CRUD, media upload workflows, richer dealer/admin tools, favorites, saved searches, and role-based mutations.
