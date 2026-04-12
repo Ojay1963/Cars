@@ -1,9 +1,12 @@
 import { useMemo, useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useSearchParams } from "react-router-dom";
+import SectionHeading from "../components/SectionHeading.jsx";
+import VehicleCard from "../components/VehicleCard.jsx";
 import vehicleCatalog from "../data/vehicleCatalog.js";
 
 export default function Showroom() {
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const maxCatalogPrice = useMemo(
     () => Math.max(...vehicleCatalog.map((car) => car.priceValue)),
     []
@@ -13,23 +16,47 @@ export default function Showroom() {
     () => [...new Set(vehicleCatalog.map((car) => car.model.split(" ")[0]))],
     []
   );
+
   const types = useMemo(
     () => [...new Set(vehicleCatalog.map((car) => car.type))],
     []
   );
 
-  const [query, setQuery] = useState("");
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(maxCatalogPrice);
-  const [selectedBrands, setSelectedBrands] = useState([]);
-  const [selectedTypes, setSelectedTypes] = useState([]);
+  const [query, setQuery] = useState(searchParams.get("q") || "");
+  const [minPrice, setMinPrice] = useState(Number(searchParams.get("min")) || 0);
+  const [maxPrice, setMaxPrice] = useState(
+    Number(searchParams.get("max")) || maxCatalogPrice
+  );
+  const [selectedBrands, setSelectedBrands] = useState(
+    searchParams.get("brand") ? [searchParams.get("brand")] : []
+  );
+  const [selectedTypes, setSelectedTypes] = useState(
+    searchParams.get("type") ? [searchParams.get("type")] : []
+  );
 
-  const toggleSelected = (value, listSetter, list) => {
-    if (list.includes(value)) {
-      listSetter(list.filter((item) => item !== value));
-    } else {
-      listSetter([...list, value]);
-    }
+  const syncParams = (nextState) => {
+    const params = new URLSearchParams();
+    if (nextState.query.trim()) params.set("q", nextState.query.trim());
+    if (nextState.minPrice > 0) params.set("min", String(nextState.minPrice));
+    if (nextState.maxPrice < maxCatalogPrice) params.set("max", String(nextState.maxPrice));
+    if (nextState.selectedBrands.length === 1) params.set("brand", nextState.selectedBrands[0]);
+    if (nextState.selectedTypes.length === 1) params.set("type", nextState.selectedTypes[0]);
+    setSearchParams(params, { replace: true });
+  };
+
+  const toggleSelected = (value, list, setList) => {
+    const updated = list.includes(value)
+      ? list.filter((item) => item !== value)
+      : [...list, value];
+
+    setList(updated);
+    syncParams({
+      query,
+      minPrice,
+      maxPrice,
+      selectedBrands: setList === setSelectedBrands ? updated : selectedBrands,
+      selectedTypes: setList === setSelectedTypes ? updated : selectedTypes
+    });
   };
 
   const filtered = useMemo(() => {
@@ -51,135 +78,189 @@ export default function Showroom() {
     });
   }, [maxPrice, minPrice, query, selectedBrands, selectedTypes]);
 
+  const activeFilters = [
+    query ? `Search: ${query}` : null,
+    minPrice > 0 ? `Min: NGN ${minPrice.toLocaleString("en-NG")}` : null,
+    maxPrice < maxCatalogPrice ? `Max: NGN ${maxPrice.toLocaleString("en-NG")}` : null,
+    ...selectedBrands.map((brand) => `Make: ${brand}`),
+    ...selectedTypes.map((type) => `Type: ${type}`)
+  ].filter(Boolean);
+
   const resetFilters = () => {
     setQuery("");
     setMinPrice(0);
     setMaxPrice(maxCatalogPrice);
     setSelectedBrands([]);
     setSelectedTypes([]);
+    setSearchParams({}, { replace: true });
   };
 
   return (
-    <section className="section">
+    <section className="section showroom-page">
       <div className="container">
-        <div className="section-header">
-          <div>
-            <h1>Inventory</h1>
-            <p>{filtered.length} vehicles available</p>
+        <div className="showroom-hero">
+          <SectionHeading
+            eyebrow="Inventory marketplace"
+            title="Explore verified vehicles with cleaner filters and clearer pricing"
+            description="Browse by make, body type, and budget with a layout designed for quick comparison on every screen size."
+          />
+          <div className="showroom-summary-card">
+            <strong>{filtered.length}</strong>
+            <span>vehicles available right now</span>
           </div>
         </div>
+
         <div className="inventory-layout">
           <aside className="filter-card">
-            <h3>Filter Vehicles</h3>
+            <div className="filter-card-header">
+              <h3>Search & filters</h3>
+              <button type="button" className="section-link" onClick={resetFilters}>
+                Reset all
+              </button>
+            </div>
+
             <div className="filter-group">
-              <label>Search</label>
+              <label htmlFor="inventory-query">Search</label>
               <input
+                id="inventory-query"
                 value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Search by keywords..."
+                onChange={(event) => {
+                  const next = event.target.value;
+                  setQuery(next);
+                  syncParams({
+                    query: next,
+                    minPrice,
+                    maxPrice,
+                    selectedBrands,
+                    selectedTypes
+                  });
+                }}
+                placeholder="Search make, model, location..."
               />
             </div>
+
             <div className="filter-group">
-              <label>Price Range</label>
+              <label>Price range</label>
               <div className="filter-row">
                 <input
                   type="number"
                   value={minPrice}
                   min="0"
-                  onChange={(event) => setMinPrice(Number(event.target.value))}
-                  placeholder="$ Min"
+                  onChange={(event) => {
+                    const next = Number(event.target.value);
+                    setMinPrice(next);
+                    syncParams({
+                      query,
+                      minPrice: next,
+                      maxPrice,
+                      selectedBrands,
+                      selectedTypes
+                    });
+                  }}
+                  placeholder="Min"
                 />
                 <input
                   type="number"
                   value={maxPrice}
                   min="0"
-                  onChange={(event) => setMaxPrice(Number(event.target.value))}
-                  placeholder="$ Max"
+                  onChange={(event) => {
+                    const next = Number(event.target.value);
+                    setMaxPrice(next);
+                    syncParams({
+                      query,
+                      minPrice,
+                      maxPrice: next,
+                      selectedBrands,
+                      selectedTypes
+                    });
+                  }}
+                  placeholder="Max"
                 />
               </div>
             </div>
+
             <div className="filter-group">
               <label>Make</label>
               <div className="checkbox-list">
                 {brands.map((brand) => (
-                  <label key={brand}>
+                  <label key={brand} className="checkbox-item">
                     <input
                       type="checkbox"
                       checked={selectedBrands.includes(brand)}
-                      onChange={() => toggleSelected(brand, setSelectedBrands, selectedBrands)}
+                      onChange={() => toggleSelected(brand, selectedBrands, setSelectedBrands)}
                     />
-                    {brand}
+                    <span>{brand}</span>
                   </label>
                 ))}
               </div>
             </div>
+
             <div className="filter-group">
-              <label>Body Type</label>
+              <label>Body type</label>
               <div className="checkbox-list">
                 {types.map((type) => (
-                  <label key={type}>
+                  <label key={type} className="checkbox-item">
                     <input
                       type="checkbox"
                       checked={selectedTypes.includes(type)}
-                      onChange={() => toggleSelected(type, setSelectedTypes, selectedTypes)}
+                      onChange={() => toggleSelected(type, selectedTypes, setSelectedTypes)}
                     />
-                    {type}
+                    <span>{type}</span>
                   </label>
                 ))}
               </div>
             </div>
-            <button type="button" className="text-link" onClick={resetFilters}>
-              Reset Filters
-            </button>
           </aside>
 
-          <div className="inventory-grid">
-            {filtered.map((car) => (
-              <article
-                key={car.id}
-                className="inventory-card"
-                role="button"
-                tabIndex={0}
-                onClick={() => navigate(`/showroom/${car.id}`)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    navigate(`/showroom/${car.id}`);
-                  }
-                }}
-              >
-                <div
-                  className="inventory-media"
-                  style={{ backgroundImage: `url(${car.image})` }}
-                >
-                  <span className="tag">{car.type}</span>
-                </div>
-                <div className="inventory-body">
-                  <h3>{car.name}</h3>
-                  <span className="inventory-meta">
-                    {car.type} • Stock #{car.id.split("-").pop()}
+          <div className="inventory-main">
+            <div className="inventory-toolbar">
+              <p>Showing vehicles matched to your current search.</p>
+              <NavLink className="button button-secondary inventory-toolbar-cta" to="/contact">
+                Need help sourcing a car?
+              </NavLink>
+            </div>
+
+            {activeFilters.length > 0 ? (
+              <div className="active-filter-bar">
+                {activeFilters.map((item) => (
+                  <span key={item} className="active-filter-chip">
+                    {item}
                   </span>
-                  <div className="inventory-specs">
-                    <span>{car.distance}</span>
-                    <span>{car.transmission}</span>
-                    <span>{car.fuel}</span>
-                  </div>
-                  <div className="inventory-footer">
-                    <div>
-                      <span className="price-label">Price</span>
-                      <strong>{car.price}</strong>
-                    </div>
-                    <NavLink
-                      className="text-link"
-                      to={`/showroom/${car.id}`}
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      View Specs
-                    </NavLink>
-                  </div>
-                </div>
-              </article>
-            ))}
+                ))}
+              </div>
+            ) : null}
+
+            <div className="inventory-cta-card">
+              <div>
+                <span className="section-eyebrow">Conversion-focused support</span>
+                <h3>Talk to a specialist if you want faster shortlist guidance</h3>
+                <p>
+                  Buyers looking for premium inventory usually convert better with a quick
+                  consultation. We can help narrow by budget, body type, and location.
+                </p>
+              </div>
+              <div className="inventory-cta-actions">
+                <NavLink className="button button-primary" to="/contact">
+                  Contact Dealer
+                </NavLink>
+                <NavLink className="button button-secondary" to="/factory">
+                  Ownership Services
+                </NavLink>
+              </div>
+            </div>
+
+            <div className="vehicle-grid">
+              {filtered.map((vehicle) => (
+                <VehicleCard key={vehicle.id} vehicle={vehicle} variant="inventory" />
+              ))}
+            </div>
+
+            {filtered.length === 0 ? (
+              <div className="empty-state">
+                <h3>No vehicles match your filters</h3>
+                <p>Try widening the price range or clearing one of the selected categories.</p>
+              </div>
+            ) : null}
           </div>
         </div>
       </div>

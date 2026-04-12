@@ -1,225 +1,266 @@
-﻿import { NavLink, useNavigate } from "react-router-dom";
-import vehicleCatalog from "../data/vehicleCatalog.js";
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import PricingSnapshotTable from "../components/PricingSnapshotTable.jsx";
+import SectionHeading from "../components/SectionHeading.jsx";
+import VehicleCard from "../components/VehicleCard.jsx";
 import { servicePricingSnapshot } from "../data/servicePricing.js";
+import vehicleCatalog from "../data/vehicleCatalog.js";
 
 const heroImage =
-  "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=2000&q=80";
-const ctaImage =
-  "https://images.unsplash.com/photo-1511919884226-fd3cad34687c?auto=format&fit=crop&w=2000&q=80";
+  "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?auto=format&fit=crop&w=2000&q=80";
 
 const stats = [
-  { value: "500+", label: "Cars Sold" },
-  { value: "15+", label: "Years Experience" },
-  { value: "100%", label: "Customer Satisfaction" },
-  { value: "24/7", label: "Support" }
+  { value: "100+", label: "Verified listings" },
+  { value: "15+", label: "Years in market" },
+  { value: "24 hrs", label: "Average response time" },
+  { value: "120-point", label: "Inspection standard" }
 ];
 
-const whyCards = [
+const partnerBrands = ["Toyota", "Lexus", "Mercedes-Benz", "BMW", "Ford", "Honda"];
+
+const trustHighlights = [
   {
-    title: "Certified Quality",
-    text: "Every vehicle comes with a comprehensive inspection and certification of authenticity.",
-    icon: "M12 4l7 3v5c0 4-3 7-7 8-4-1-7-4-7-8V7l7-3z"
+    title: "Verified listings",
+    text: "Each vehicle is reviewed for ownership history, condition, and market-aligned pricing."
   },
   {
-    title: "Instant Financing",
-    text: "Get approved in minutes with our streamlined financing process.",
-    icon: "M4 7h16v10H4zM9 11h6"
+    title: "Trusted dealers",
+    text: "We work with vetted sourcing partners and experienced advisors across key Nigerian cities."
   },
   {
-    title: "Award Winning Service",
-    text: "Rated #1 dealership for customer satisfaction three years in a row.",
-    icon: "M12 6l2.1 4.3 4.7.7-3.4 3.3.8 4.7L12 16l-4.2 2.2.8-4.7-3.4-3.3 4.7-.7L12 6z"
+    title: "Transparent pricing",
+    text: "Clear valuation guidance, finance support, and no hidden marketplace surprises."
+  },
+  {
+    title: "Inspected vehicles",
+    text: "Major systems, interior condition, and documentation are checked before vehicles go live."
+  }
+];
+
+const featuredCollections = [
+  {
+    title: "Executive Sedans",
+    description: "Comfort-first models for daily driving, client movement, and polished business travel."
+  },
+  {
+    title: "Family SUVs",
+    description: "Spacious, durable options designed for long-distance comfort and practical flexibility."
+  },
+  {
+    title: "Prestige Picks",
+    description: "High-spec models with standout design, premium cabin finishes, and stronger resale appeal."
+  }
+];
+
+const steps = [
+  {
+    title: "Discover",
+    text: "Use structured search, pricing, and specs to narrow quickly."
+  },
+  {
+    title: "Validate",
+    text: "Review verified condition details, dealership support, and finance options."
+  },
+  {
+    title: "Convert",
+    text: "Book a test drive, request a quote, or speak with a specialist without friction."
   }
 ];
 
 const testimonials = [
   {
     name: "Chinedu A.",
-    quote: "Smooth financing, fast delivery, and the car was exactly as listed.",
-    location: "Lagos, Nigeria",
-    image:
-      "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=600&q=80"
+    quote:
+      "The pricing was clear, the inspection was documented, and the delivery process felt properly managed.",
+    location: "Lagos"
   },
   {
     name: "Teni O.",
-    quote: "Best dealership experience I have had in Lagos. Clear pricing and great support.",
-    location: "Abuja, Nigeria",
-    image:
-      "https://images.unsplash.com/photo-1544723795-3fb6469f5b39?auto=format&fit=crop&w=600&q=80"
+    quote:
+      "It felt like buying from a real automotive brand, not scrolling through random listings.",
+    location: "Abuja"
   },
   {
     name: "Seyi K.",
-    quote: "Trade-in was simple and the team helped me upgrade in one visit.",
-    location: "Port Harcourt, Nigeria",
-    image:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=600&q=80"
+    quote:
+      "The team helped me shortlist quickly and book a test drive without back-and-forth stress.",
+    location: "Port Harcourt"
   }
 ];
 
-const timeline = [
-  { title: "Test Drive", time: "30–45 min" },
-  { title: "Purchase Process", time: "2–3 hours" },
-  { title: "Vehicle Delivery", time: "Same day" },
-  { title: "Detailing", time: "3–5 hours" }
-];
-
-const fleetPerks = [
-  "Priority sourcing for fleet vehicles",
-  "Consolidated monthly invoicing",
-  "Dedicated account advisor",
-  "After-hours drop-off"
-];
-
-const partsBrands = [
+const ctaBlocks = [
   {
-    title: "OEM Parts",
-    text: "Factory-fit components for original performance."
+    title: "Browse inventory",
+    text: "Explore ready-to-drive sedans, SUVs, trucks, and vans in one structured catalog.",
+    link: "/showroom",
+    action: "View listings"
   },
   {
-    title: "Premium Aftermarket",
-    text: "High-quality alternatives when OEM is unavailable."
+    title: "Sell your vehicle",
+    text: "Connect with our team for pricing support, inspections, and qualified buyer reach.",
+    link: "/contact",
+    action: "Start appraisal"
   },
   {
-    title: "Warranty Options",
-    text: "Clear coverage and protection tiers for every budget."
+    title: "Book a service visit",
+    text: "Keep your vehicle showroom-ready with diagnostics, detailing, and after-sales care.",
+    link: "/factory",
+    action: "Schedule service"
   }
 ];
 
-const sustainability = [
-  "Fluid recovery and recycling",
-  "Low-VOC cleaners and coatings",
-  "LED lighting across all bays",
-  "Digital estimates to reduce paper waste"
-];
-
-const beforeAfter = [
-  {
-    title: "Interior Deep Clean",
-    text: "Stain removal, steam treatment, and fresh finish."
-  },
-  {
-    title: "Headlight Restoration",
-    text: "Clarity restored for safer night visibility."
-  },
-  {
-    title: "Paint Correction",
-    text: "Swirl removal and gloss enhancement."
-  }
-];
 export default function Home() {
   const navigate = useNavigate();
-  const featured = vehicleCatalog.slice(0, 3);
+  const featuredVehicles = vehicleCatalog.slice(0, 6);
+  const [heroSearch, setHeroSearch] = useState({
+    query: "",
+    type: "",
+    maxPrice: ""
+  });
+
+  const handleHeroChange = (event) => {
+    const { name, value } = event.target;
+    setHeroSearch((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleHeroSubmit = (event) => {
+    event.preventDefault();
+
+    const params = new URLSearchParams();
+    if (heroSearch.query.trim()) params.set("q", heroSearch.query.trim());
+    if (heroSearch.type) params.set("type", heroSearch.type);
+    if (heroSearch.maxPrice) params.set("max", heroSearch.maxPrice);
+
+    navigate(`/showroom${params.toString() ? `?${params}` : ""}`);
+  };
 
   return (
     <>
-      <section className="home-hero" style={{ backgroundImage: `url(${heroImage})` }}>
+      <section className="hero-section">
+        <div className="hero-background" style={{ backgroundImage: `url(${heroImage})` }} />
         <div className="hero-overlay" />
-        <div className="container hero-content">
-          <span className="hero-pill">Premium Dealership Experience</span>
-          <h1>
-            Find Your Dream Car
-            <span>Without Limits.</span>
-          </h1>
-          <p>
-            Discover a curated collection of the finest vehicles in Nigeria.
-            Unmatched quality, transparent pricing, and exceptional service.
-          </p>
-          <div className="hero-actions">
-            <NavLink className="btn primary" to="/showroom">
-              Browse Inventory
-            </NavLink>
-            <NavLink className="btn ghost" to="/contact">
-              Contact Sales
-            </NavLink>
-          </div>
-          <div className="hero-stats">
-            {stats.map((stat) => (
-              <div key={stat.label}>
-                <strong>{stat.value}</strong>
-                <span>{stat.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        <div className="container hero-layout">
+          <div className="hero-copy">
+            <span className="hero-eyebrow">Trusted automotive marketplace</span>
+            <h1>Find premium vehicles with the confidence of a modern dealer platform.</h1>
+            <p>
+              Browse verified listings, compare serious options, and move from
+              discovery to test drive with a cleaner, more trustworthy buying journey.
+            </p>
 
-      <section className="section">
-        <div className="container fade-in">
-          <div className="section-header">
-            <div>
-              <h2>Featured Vehicles</h2>
-              <p>Hand-picked from our exclusive collection. Each vehicle undergoes a rigorous inspection.</p>
+            <div className="hero-actions">
+              <NavLink className="button button-primary" to="/showroom">
+                Browse Inventory
+              </NavLink>
+              <NavLink className="button button-secondary button-on-dark" to="/contact">
+                Speak to Sales
+              </NavLink>
             </div>
-            <NavLink className="text-link" to="/showroom">
-              View All
-            </NavLink>
+
+            <div className="hero-stats">
+              {stats.map((stat) => (
+                <div key={stat.label} className="hero-stat">
+                  <strong>{stat.value}</strong>
+                  <span>{stat.label}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="card-grid">
-            {featured.map((car) => (
-              <article
-                key={car.id}
-                className="vehicle-card"
-                role="button"
-                tabIndex={0}
-                onClick={() => navigate(`/showroom/${car.id}`)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    navigate(`/showroom/${car.id}`);
-                  }
-                }}
-              >
-                <div
-                  className="vehicle-media"
-                  style={{ backgroundImage: `url(${car.image})` }}
-                >
-                  <span className="tag">{car.type}</span>
-                </div>
-                <div className="vehicle-content">
-                  <h3>{car.name}</h3>
-                  <span className="vehicle-meta">{car.type} ï¿½ Stock #{car.id.split("-").pop()}</span>
-                  <div className="vehicle-specs">
-                    <span>{car.distance}</span>
-                    <span>{car.transmission}</span>
-                    <span>{car.fuel}</span>
-                  </div>
-                  <div className="vehicle-footer">
-                    <div>
-                      <span className="price-label">Price</span>
-                      <strong>{car.price}</strong>
-                    </div>
-                    <NavLink
-                      className="spec-link"
-                      to={`/showroom/${car.id}`}
-                      onClick={(event) => event.stopPropagation()}
-                    >
-                      View Specs
-                    </NavLink>
-                  </div>
-                </div>
-              </article>
+
+          <div className="hero-search-card">
+            <div className="hero-search-head">
+              <span className="section-eyebrow">Search smarter</span>
+              <h2>Start with the right fit</h2>
+              <p>Use premium quick filters to jump directly into the best inventory for your budget.</p>
+            </div>
+
+            <form className="hero-search-form" onSubmit={handleHeroSubmit}>
+              <label>
+                Search by make or model
+                <input
+                  name="query"
+                  placeholder="Toyota, Lexus, G-Wagon..."
+                  value={heroSearch.query}
+                  onChange={handleHeroChange}
+                />
+              </label>
+
+              <div className="hero-search-grid">
+                <label>
+                  Body type
+                  <select name="type" value={heroSearch.type} onChange={handleHeroChange}>
+                    <option value="">All types</option>
+                    <option value="Sedan">Sedan</option>
+                    <option value="SUV">SUV</option>
+                    <option value="Truck">Truck</option>
+                    <option value="Van">Van</option>
+                  </select>
+                </label>
+
+                <label>
+                  Max budget
+                  <select name="maxPrice" value={heroSearch.maxPrice} onChange={handleHeroChange}>
+                    <option value="">Any budget</option>
+                    <option value="20000000">Up to NGN 20M</option>
+                    <option value="40000000">Up to NGN 40M</option>
+                    <option value="80000000">Up to NGN 80M</option>
+                    <option value="200000000">Up to NGN 200M</option>
+                  </select>
+                </label>
+              </div>
+
+              <button type="submit" className="button button-primary button-full">
+                Search Inventory
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section className="brand-strip-section">
+        <div className="container brand-strip">
+          <span className="brand-strip-label">Popular brands on the marketplace</span>
+          <div className="brand-strip-logos" aria-label="Popular vehicle brands">
+            {partnerBrands.map((brand) => (
+              <span key={brand}>{brand}</span>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section muted">
-        <div className="container fade-in">
-          <div className="section-header centered">
-            <h2>Why Choose Ojay Motors</h2>
-            <p>We are not just selling cars; we are providing a lifestyle.</p>
+      <section className="section">
+        <div className="container">
+          <SectionHeading
+            eyebrow="Featured inventory"
+            title="Popular vehicles buyers are exploring now"
+            description="Premium cards, clearer pricing, and faster access to the details that matter most."
+            linkLabel="View all inventory"
+            linkTo="/showroom"
+          />
+
+          <div className="vehicle-grid">
+            {featuredVehicles.map((vehicle) => (
+              <VehicleCard key={vehicle.id} vehicle={vehicle} />
+            ))}
           </div>
-          <div className="feature-grid">
-            {whyCards.map((card) => (
-              <article key={card.title} className="feature-card">
-                <span className="feature-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24">
-                    <path d={card.icon} />
-                  </svg>
-                </span>
-                <h3>{card.title}</h3>
-                <p>{card.text}</p>
+        </div>
+      </section>
+
+      <section className="section section-soft">
+        <div className="container">
+          <SectionHeading
+            eyebrow="Trust and quality"
+            title="Marketplace standards designed to build confidence"
+            description="Every interaction is structured to make discovery easier, pricing clearer, and decisions more informed."
+            align="center"
+          />
+
+          <div className="trust-grid">
+            {trustHighlights.map((item) => (
+              <article key={item.title} className="trust-card">
+                <span className="trust-icon" aria-hidden="true" />
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
               </article>
             ))}
           </div>
@@ -227,137 +268,101 @@ export default function Home() {
       </section>
 
       <section className="section">
-        <div className="container fade-in">
-          <div className="section-header centered">
-            <h2>Customer Stories</h2>
-            <p>Trusted by drivers across Nigeria for clarity and quality care.</p>
-          </div>
-          <div className="testimonial-grid">
-            {testimonials.map((item) => (
-              <article key={item.name} className="testimonial-card">
-                <img className="testimonial-avatar" src={item.image} alt={item.name} />
-                <p className="testimonial-quote">"{item.quote}"</p>
-                <strong className="testimonial-name">{item.name}</strong>
-                <span className="testimonial-location">{item.location}</span>
-              </article>
-            ))}
+        <div className="container">
+          <div className="split-panel">
+            <div className="split-panel-copy">
+              <span className="section-eyebrow">Curated discovery</span>
+              <h2>Shop the marketplace the way real buyers think</h2>
+              <p>
+                Whether you are buying for executive use, family comfort, or premium
+                status, the journey is now built around clearer decisions and faster
+                scanning.
+              </p>
+              <div className="journey-steps">
+                {steps.map((step) => (
+                  <article key={step.title} className="journey-step">
+                    <strong>{step.title}</strong>
+                    <p>{step.text}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            <div className="collection-list">
+              {featuredCollections.map((item) => (
+                <article key={item.title} className="collection-card">
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="section muted">
-        <div className="container fade-in">
-          <div className="section-header centered">
-            <h2>Pricing Snapshot</h2>
-            <p>Transparent estimates before work begins.</p>
-          </div>
+      <section className="section section-tight">
+        <div className="container cta-band-grid">
+          {ctaBlocks.map((item) => (
+            <article key={item.title} className="cta-band-card">
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+              <NavLink className="section-link" to={item.link}>
+                {item.action}
+              </NavLink>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section section-soft">
+        <div className="container">
+          <SectionHeading
+            eyebrow="Ownership support"
+            title="Transparent service pricing at a glance"
+            description="A cleaner table and structured ranges help customers understand what comes next after purchase."
+            align="center"
+          />
           <PricingSnapshotTable items={servicePricingSnapshot} />
         </div>
       </section>
 
       <section className="section">
-        <div className="container fade-in">
-          <div className="section-header centered">
-            <h2>Service Timeline</h2>
-            <p>Typical completion windows for popular services.</p>
-          </div>
-          <div className="timeline-grid">
-            {timeline.map((item) => (
-              <article key={item.title} className="timeline-card">
-                <h3>{item.title}</h3>
-                <span>{item.time}</span>
+        <div className="container">
+          <SectionHeading
+            eyebrow="Customer feedback"
+            title="Built to feel credible from first click to final handover"
+            description="Real marketplace UX is about reducing friction and uncertainty. These stories reinforce that promise."
+            align="center"
+          />
+
+          <div className="testimonial-grid">
+            {testimonials.map((item) => (
+              <article key={item.name} className="testimonial-card">
+                <p className="testimonial-quote">"{item.quote}"</p>
+                <strong>{item.name}</strong>
+                <span>{item.location}</span>
               </article>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="section muted">
-        <div className="container fade-in">
-          <div className="section-header centered">
-            <h2>Fleet & Corporate</h2>
-            <p>Reliable sourcing and service plans for business fleets.</p>
+      <section className="section">
+        <div className="container final-cta">
+          <div>
+            <span className="section-eyebrow">Ready to move forward?</span>
+            <h2>Browse verified inventory or speak with a product specialist today.</h2>
           </div>
-          <div className="fleet-card">
-            <ul>
-              {fleetPerks.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-            <NavLink className="text-link" to="/contact">
-              Create a Fleet Account
+          <div className="final-cta-actions">
+            <NavLink className="button button-primary" to="/showroom">
+              Browse Inventory
+            </NavLink>
+            <NavLink className="button button-secondary" to="/contact">
+              Contact Dealer
             </NavLink>
           </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container fade-in">
-          <div className="section-header centered">
-            <h2>Parts & Brands</h2>
-            <p>We match the right part to your vehicle and budget.</p>
-          </div>
-          <div className="parts-grid">
-            {partsBrands.map((item) => (
-              <article key={item.title} className="parts-card">
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section muted">
-        <div className="container fade-in">
-          <div className="section-header centered">
-            <h2>Sustainability</h2>
-            <p>Responsible practices that reduce waste and energy use.</p>
-          </div>
-          <div className="sustain-grid">
-            {sustainability.map((item) => (
-              <div key={item} className="sustain-item">
-                {item}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container fade-in">
-          <div className="section-header centered">
-            <h2>Before & After</h2>
-            <p>Detailing and restoration results you can see.</p>
-          </div>
-          <div className="before-after-grid">
-            {beforeAfter.map((item) => (
-              <article key={item.title} className="before-after-card">
-                <div className="before-after-badge">Before / After</div>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="cta-banner" style={{ backgroundImage: `url(${ctaImage})` }}>
-        <div className="cta-overlay" />
-        <div className="container cta-content">
-          <h2>Ready to upgrade your ride?</h2>
-          <p>
-            Schedule a test drive today and experience the difference. Our team is
-            ready to help you find the perfect vehicle.
-          </p>
-          <NavLink className="btn primary" to="/contact">
-            Schedule Test Drive
-          </NavLink>
         </div>
       </section>
     </>
   );
 }
-
-
-

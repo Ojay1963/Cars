@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import SectionHeading from "../components/SectionHeading.jsx";
 import { getJson, patchJson, postJson } from "../utils/api.js";
 
 const statusOptions = ["pending", "confirmed", "completed", "cancelled"];
@@ -20,6 +21,7 @@ export default function Admin() {
     email: "",
     password: ""
   });
+  const [showPassword, setShowPassword] = useState(false);
   const [overview, setOverview] = useState({
     stats: {
       totalContacts: 0,
@@ -112,9 +114,7 @@ export default function Admin() {
       await patchJson(`/api/appointments/${appointmentId}`, { status }, { token });
       setOverview((prev) => {
         const updatedAppointments = prev.appointments.map((appointment) =>
-          appointment.id === appointmentId
-            ? { ...appointment, status }
-            : appointment
+          appointment.id === appointmentId ? { ...appointment, status } : appointment
         );
         const pendingAppointments = updatedAppointments.filter(
           (appointment) => appointment.status === "pending"
@@ -141,8 +141,11 @@ export default function Admin() {
       <section className="section admin-page">
         <div className="container">
           <div className="admin-login-card">
-            <h1>Admin Login</h1>
-            <p>Sign in to access contact messages and appointments.</p>
+            <SectionHeading
+              eyebrow="Admin"
+              title="Secure dashboard access"
+              description="Log in to review leads, appointment requests, and the latest contact activity."
+            />
             <form className="admin-login-form" onSubmit={handleLogin}>
               <label>
                 Admin Email
@@ -156,19 +159,60 @@ export default function Admin() {
               </label>
               <label>
                 Password
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Enter password"
-                  value={credentials.password}
-                  onChange={handleCredentialChange}
-                />
+                <div className="password-field">
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    placeholder="Enter password"
+                    value={credentials.password}
+                    onChange={handleCredentialChange}
+                  />
+                  <button
+                    type="button"
+                    className="password-toggle"
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                    aria-pressed={showPassword}
+                    onClick={() => setShowPassword((value) => !value)}
+                  >
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path
+                        d="M1.5 12s3.8-6 10.5-6 10.5 6 10.5 6-3.8 6-10.5 6S1.5 12 1.5 12Z"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="3.2"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.8"
+                      />
+                      {!showPassword ? null : (
+                        <path
+                          d="M4 20 20 4"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.8"
+                          strokeLinecap="round"
+                        />
+                      )}
+                    </svg>
+                  </button>
+                </div>
               </label>
-              <button type="submit" className="btn primary full" disabled={isLoggingIn}>
+              <button
+                type="submit"
+                className="button button-primary button-full"
+                disabled={isLoggingIn}
+              >
                 {isLoggingIn ? "Signing in..." : "Sign In"}
               </button>
             </form>
-            {statusMessage && <p className="admin-status">{statusMessage}</p>}
+            {statusMessage ? <p className="admin-status">{statusMessage}</p> : null}
           </div>
         </div>
       </section>
@@ -181,24 +225,24 @@ export default function Admin() {
         <div className="section-header">
           <div>
             <h1>Admin Dashboard</h1>
-            <p>Monitor inbound messages and service bookings.</p>
+            <p>Monitor inbound messages and service bookings in one cleaner workspace.</p>
           </div>
           <div className="admin-actions">
             <button
               type="button"
-              className="btn primary"
+              className="button button-primary"
               onClick={loadOverview}
               disabled={isLoading}
             >
               {isLoading ? "Refreshing..." : "Refresh"}
             </button>
-            <button type="button" className="btn ghost" onClick={handleLogout}>
+            <button type="button" className="button button-secondary" onClick={handleLogout}>
               Logout
             </button>
           </div>
         </div>
 
-        {statusMessage && <p className="admin-status">{statusMessage}</p>}
+        {statusMessage ? <p className="admin-status">{statusMessage}</p> : null}
 
         <div className="admin-stats-grid">
           <article className="admin-stat-card">

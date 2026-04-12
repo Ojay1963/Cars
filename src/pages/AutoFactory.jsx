@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import PricingSnapshotTable from "../components/PricingSnapshotTable.jsx";
+import SectionHeading from "../components/SectionHeading.jsx";
 import { servicePricingSnapshot } from "../data/servicePricing.js";
 import { postJson } from "../utils/api.js";
 
@@ -8,42 +9,42 @@ const services = [
   {
     title: "Oil Change",
     text: "Full synthetic, blend, or conventional oil change with filter replacement.",
-    price: "From ₦18,000",
+    price: "From NGN 18,000",
     image:
       "https://images.unsplash.com/photo-1615906655593-ad0386982a0f?auto=format&fit=crop&w=1200&q=80"
   },
   {
     title: "Brake Repair",
     text: "Brake pad replacement, rotor resurfacing, and fluid flush.",
-    price: "Free Inspection",
+    price: "Free inspection",
     image:
       "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80"
   },
   {
     title: "Tire Services",
     text: "Tire rotation, balancing, alignment, and new tire installation.",
-    price: "From ₦28,000",
+    price: "From NGN 28,000",
     image:
       "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=80"
   },
   {
     title: "Engine Diagnostics",
-    text: "Comprehensive engine check using state-of-the-art diagnostic tools.",
-    price: "From ₦45,000",
+    text: "Comprehensive engine checks using dealership-grade diagnostic tools.",
+    price: "From NGN 45,000",
     image:
       "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80"
   },
   {
     title: "Battery Service",
-    text: "Battery testing, terminal cleaning, and replacement if needed.",
-    price: "Free Testing",
+    text: "Battery testing, terminal cleaning, and replacement support where needed.",
+    price: "Free testing",
     image:
       "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80"
   },
   {
     title: "AC & Heating",
-    text: "System evacuation, recharge, and leak detection services.",
-    price: "From ₦55,000",
+    text: "System evacuation, recharge, and leak detection for year-round comfort.",
+    price: "From NGN 55,000",
     image:
       "https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=1200&q=80"
   }
@@ -51,20 +52,20 @@ const services = [
 
 const whyChoose = [
   {
-    title: "Certified Technicians",
-    text: "ASE-certified mechanics with multi-brand expertise."
+    title: "Certified technicians",
+    text: "Experienced mechanics with multi-brand expertise and structured diagnostics."
   },
   {
-    title: "Genuine Parts",
-    text: "We use OEM or high-quality aftermarket parts for all repairs."
+    title: "Genuine parts",
+    text: "We prioritize OEM or trusted premium aftermarket parts based on your needs."
   },
   {
-    title: "Transparent Pricing",
-    text: "No hidden fees. We provide detailed quotes before any work."
+    title: "Transparent pricing",
+    text: "No hidden surprises. Quotes are clearer before work begins."
   },
   {
-    title: "Satisfaction Guaranteed",
-    text: "24-month warranty on parts and labor for peace of mind."
+    title: "Ownership continuity",
+    text: "The same premium service mindset carries through after the sale."
   }
 ];
 
@@ -79,7 +80,7 @@ const faqs = [
   },
   {
     q: "How long does a brake service take?",
-    a: "Most brake services are completed within 2–3 hours."
+    a: "Most brake services are completed within 2-3 hours depending on parts and condition."
   }
 ];
 
@@ -144,19 +145,29 @@ export default function AutoFactory() {
 
   return (
     <section className="section services-page pro-service">
-      <div className="service-hero">
-        <div className="container">
-          <div className="service-hero-content">
-            <h1>Our Services</h1>
-            <p>Comprehensive auto care delivered by certified experts.</p>
-            <NavLink className="service-hero-cta" to="/contact">
-              Schedule Service
-            </NavLink>
+      <div className="container">
+        <div className="service-hero">
+          <div className="container">
+            <div className="service-hero-content">
+              <span className="section-eyebrow">After-sales support</span>
+              <h1>Premium vehicle care that matches the marketplace experience</h1>
+              <p>
+                Diagnostics, maintenance, and ownership support presented with the same
+                clarity and polish as the buying journey.
+              </p>
+              <NavLink className="service-hero-cta" to="/contact">
+                Schedule Service
+              </NavLink>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="container">
+        <SectionHeading
+          eyebrow="Core services"
+          title="Structured care packages for modern vehicle ownership"
+          description="Service cards now feel like premium marketplace modules instead of a basic list."
+        />
+
         <div className="service-card-grid">
           {services.map((item) => (
             <article key={item.title} className="service-tile">
@@ -169,7 +180,7 @@ export default function AutoFactory() {
               <div className="service-tile-body">
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
-                <NavLink className="service-tile-cta" to="/contact">
+                <NavLink className="button button-secondary" to="/contact">
                   Book This Service
                 </NavLink>
               </div>
@@ -178,18 +189,22 @@ export default function AutoFactory() {
         </div>
 
         <div className="service-section">
-          <div className="section-header centered">
-            <h2>Pricing Snapshot</h2>
-            <p>Transparent estimates before work begins.</p>
-          </div>
+          <SectionHeading
+            eyebrow="Price clarity"
+            title="Transparent service pricing snapshot"
+            description="Customers should understand likely ownership costs before they commit."
+            align="center"
+          />
           <PricingSnapshotTable items={servicePricingSnapshot} />
         </div>
 
         <div className="service-section">
-          <div className="section-header centered">
-            <h2>Why Choose AutoFactory?</h2>
-            <p>Dealership-quality service at independent shop prices.</p>
-          </div>
+          <SectionHeading
+            eyebrow="Why choose us"
+            title="Service quality that reinforces marketplace trust"
+            description="The same premium brand signals now carry through into after-sales support."
+            align="center"
+          />
           <div className="why-grid">
             {whyChoose.map((item) => (
               <article key={item.title} className="why-card">
@@ -202,10 +217,12 @@ export default function AutoFactory() {
         </div>
 
         <div className="service-section">
-          <div className="section-header centered">
-            <h2>Frequently Asked Questions</h2>
-            <p>Got questions about your vehicle service? We have answers.</p>
-          </div>
+          <SectionHeading
+            eyebrow="FAQ"
+            title="Answers to common ownership questions"
+            description="A clearer knowledge layer helps reduce friction before customers contact support."
+            align="center"
+          />
           <div className="faq-list">
             {faqs.map((faq) => (
               <details key={faq.q} className="faq-item">
@@ -220,10 +237,10 @@ export default function AutoFactory() {
       <div className="service-cta-band">
         <div className="container service-cta-grid">
           <div className="service-cta-copy">
-            <h2>Ready to schedule your visit?</h2>
+            <span className="section-eyebrow">Book your visit</span>
+            <h2>Ready to schedule your next service appointment?</h2>
             <p>
-              Book your appointment in minutes. Our service advisors will confirm your
-              slot within 30 minutes.
+              Book in minutes and let a service advisor confirm your slot quickly.
             </p>
             <ul>
               {bookingBenefits.map((item) => (
@@ -232,7 +249,7 @@ export default function AutoFactory() {
             </ul>
           </div>
           <form className="service-cta-form" onSubmit={handleBookingSubmit}>
-            <h3>Book Appointment</h3>
+            <h3>Book appointment</h3>
             <div className="service-form-grid">
               <label>
                 Full Name
@@ -304,7 +321,7 @@ export default function AutoFactory() {
             >
               {isSubmittingBooking ? "Confirming..." : "Confirm Appointment"}
             </button>
-            {bookingStatus && <span className="form-status">{bookingStatus}</span>}
+            {bookingStatus ? <span className="form-status">{bookingStatus}</span> : null}
           </form>
         </div>
       </div>
