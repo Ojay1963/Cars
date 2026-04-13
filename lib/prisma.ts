@@ -4,12 +4,30 @@ const globalForPrisma = globalThis as unknown as {
   prisma?: PrismaClient;
 };
 
-export const prisma =
+const prismaClient =
   globalForPrisma.prisma ??
-  new PrismaClient({
-    log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"]
-  });
+  (process.env.DATABASE_URL
+    ? new PrismaClient({
+        log: process.env.NODE_ENV === "development" ? ["error", "warn"] : ["error"]
+      })
+    : undefined);
 
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = prisma;
+const missingDatabaseUrlError = () =>
+  new Error(
+    "DATABASE_URL is not configured. Set it in your environment before using database-backed routes."
+  );
+
+export const prisma =
+  prismaClient ??
+  (new Proxy(
+    {},
+    {
+      get() {
+        throw missingDatabaseUrlError();
+      }
+    }
+  ) as PrismaClient);
+
+if (process.env.NODE_ENV !== "production" && prismaClient) {
+  globalForPrisma.prisma = prismaClient;
 }
