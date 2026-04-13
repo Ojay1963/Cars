@@ -12,11 +12,11 @@ export default async function InventoryPage() {
             Inventory
           </p>
           <h1 className="text-4xl font-semibold tracking-[-0.05em] text-slate-950">
-            Browse production-backed listings
+            Browse available vehicles
           </h1>
           <p className="max-w-3xl text-lg leading-8 text-slate-600">
-            This page is now driven through the listing service layer and route handlers,
-            ready to expand into full URL-driven filtering and pagination.
+            Explore quality cars from trusted sellers and dealers, with clear details
+            to help you compare options and buy with confidence.
           </p>
         </div>
         <div className="grid gap-6 lg:grid-cols-3">

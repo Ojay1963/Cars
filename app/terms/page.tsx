@@ -6,11 +6,11 @@ export default function TermsPage() {
           Terms
         </p>
         <h1 className="mt-4 text-4xl font-semibold tracking-[-0.05em] text-slate-950">
-          Legal content can now sit inside the new platform shell cleanly.
+          Terms and conditions
         </h1>
         <p className="mt-4 max-w-2xl text-lg leading-8 text-slate-600">
-          This placeholder route exists on the new architecture so terms, privacy,
-          and compliance content can be integrated without breaking the product flow.
+          Please review the terms that govern the use of our website, listings,
+          inquiries, and related services.
         </p>
       </div>
     </section>

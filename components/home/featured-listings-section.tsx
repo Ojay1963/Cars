@@ -10,8 +10,8 @@ export function FeaturedListingsSection({
   return (
     <SectionShell
       eyebrow="Featured inventory"
-      title="Listings that feel investor-demo ready and customer-ready"
-      description="The new homepage is server-rendered and driven through the listing service layer so featured inventory can move from static mockups to real platform data."
+      title="Featured vehicles worth a closer look"
+      description="Discover standout listings selected for their condition, value, and overall appeal."
     >
       <div className="grid gap-6 lg:grid-cols-3">
         {listings.map((listing) => (

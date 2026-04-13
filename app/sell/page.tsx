@@ -15,7 +15,7 @@ const sellingBenefits = [
   {
     icon: WalletCards,
     title: "Premium presentation",
-    text: "Serious listings are presented with cleaner product-grade marketplace UX."
+    text: "Serious listings are presented with polished visuals that inspire buyer confidence."
   }
 ];
 
@@ -36,11 +36,11 @@ export default function SellPage() {
                 Sell your car
               </p>
               <h1 className="text-4xl font-semibold tracking-[-0.05em] text-slate-950">
-                Start a real seller intake flow, not a placeholder page.
+                Sell your car with confidence
               </h1>
               <p className="text-lg leading-8 text-slate-600">
-                This page now captures real appraisal leads through the backend so sellers
-                can begin the listing process with structured data instead of a dead end.
+                Share your vehicle details with our team and get guidance on pricing,
+                appraisal, and the next steps for listing.
               </p>
             </div>
 
@@ -83,7 +83,7 @@ export default function SellPage() {
                 Submit your vehicle for appraisal
               </h2>
               <p className="text-sm leading-7 text-slate-600">
-                We’ll use this information to review your vehicle and contact you with
+                We'll use this information to review your vehicle and contact you with
                 appraisal and listing guidance.
               </p>
             </div>

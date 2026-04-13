@@ -40,12 +40,11 @@ export default function AboutPage() {
               About Ojay Motors
             </p>
             <h1 className="text-4xl font-semibold tracking-[-0.05em] text-slate-950">
-              A premium automotive marketplace being built like a real company platform.
+              A trusted destination for quality vehicles
             </h1>
             <p className="text-lg leading-8 text-slate-600">
-              Ojay Motors is evolving from a brochure-style dealership site into a full
-              marketplace product with verified listings, role-based tools, structured lead
-              capture, and operational workflows for buyers, dealers, and admins.
+              Ojay Motors connects buyers with quality vehicles through a cleaner,
+              more transparent experience for browsing, inquiries, and dealer engagement.
             </p>
           </div>
 
@@ -83,16 +82,15 @@ export default function AboutPage() {
               What we are building
             </p>
             <h2 className="mt-4 text-3xl font-semibold tracking-[-0.05em] text-slate-950">
-              A trustworthy marketplace with real operational depth
+              Built around trust, quality, and service
             </h2>
             <p className="mt-4 text-base leading-8 text-slate-600">
-              The product direction is not just visual polish. It includes listing data,
-              auth, role-based dashboards, dealer workflows, inquiries, notifications,
-              moderation, and a premium browsing experience that could support real users.
+              We focus on clear vehicle information, responsive support, and a buying
+              experience that feels professional from first visit to final inquiry.
             </p>
             <p className="mt-4 text-base leading-8 text-slate-600">
-              This approach makes the platform more useful to buyers, more credible to
-              dealers, and more defensible as a real launchable startup product.
+              Our goal is to make it easier for buyers and sellers to connect through
+              a marketplace that feels dependable, polished, and easy to use.
             </p>
           </div>
 
@@ -102,10 +100,10 @@ export default function AboutPage() {
             </p>
             <div className="mt-6 space-y-5">
               {[
-                "Clean, premium product design instead of template styling",
-                "Structured lead capture and routing instead of dead-end pages",
-                "Role-aware workflows for buyers, dealers, and admins",
-                "Production-quality architecture that can scale past a demo"
+                "Carefully presented listings that highlight the right details",
+                "Straightforward inquiry flows for buyers and sellers",
+                "Professional dealer presence built on trust and clarity",
+                "A polished experience designed for everyday use"
               ].map((item) => (
                 <div key={item} className="rounded-2xl border border-white/10 bg-white/5 p-4">
                   <p className="text-sm leading-7 text-slate-200">{item}</p>
